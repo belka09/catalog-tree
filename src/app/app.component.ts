@@ -265,6 +265,11 @@ export class AppComponent implements OnDestroy {
     this.selectedNodeIcon = node.icon || 'description';
   }
 
+  selectRoot(event: MouseEvent) {
+    event.stopPropagation();
+    this.selectedNode = null;
+  }
+
   isAddEnabled(): boolean {
     return !this.selectedNode || this.selectedNode.isFolder === true;
   }
@@ -346,9 +351,5 @@ export class AppComponent implements OnDestroy {
     if (this.selectedNode) {
       this.selectedNode.isExpanded = true;
     }
-  }
-
-  selectRoot() {
-    this.selectedNode = null;
   }
 }

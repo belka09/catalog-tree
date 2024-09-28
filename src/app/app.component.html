@@ -1,42 +1,41 @@
 <mat-drawer-container class="main-container">
-  <!-- File Tree Sidebar -->
   <mat-drawer mode="side"
     opened
     class="file-structure">
-    <div class="file-tree">
-      <!-- Buttons for adding files and folders -->
-      <div class="controls">
-        <button mat-flat-button
-          color="primary"
-          class="file-button"
-          (click)="addFiles()"
-          [disabled]="!isAddEnabled()">Add 2 Files</button>
-        <button mat-flat-button
-          color="accent"
-          class="folder-button"
-          (click)="addFolders()"
-          [disabled]="!isAddEnabled()">Add 2 Folders</button>
-      </div>
+    <div class="file-tree-container"
+      (click)="selectRoot($event)">
+      <div class="file-tree">
+        <div class="controls">
+          <button mat-flat-button
+            color="primary"
+            class="file-button"
+            (click)="addFiles()"
+            [disabled]="!isAddEnabled()">Add 2 Files</button>
+          <button mat-flat-button
+            color="accent"
+            class="folder-button"
+            (click)="addFolders()"
+            [disabled]="!isAddEnabled()">Add 2 Folders</button>
+        </div>
 
-      <!-- File tree with proper height and drop zones -->
-      <div cdkDropList
-        [cdkDropListData]="nodes"
-        id="main"
-        [cdkDropListConnectedTo]="dropTargetIds"
-        (cdkDropListDropped)="drop($event)"
-        [cdkDropListSortingDisabled]="true"
-        class="cdk-drop-list">
-        <div *ngFor="let node of nodes"
-          cdkDrag
-          [cdkDragData]="node.id"
-          (cdkDragMoved)="onDragMoved($event)">
-          <ng-container *ngTemplateOutlet="tmplNode; context: { node: node }"></ng-container>
+        <div cdkDropList
+          [cdkDropListData]="nodes"
+          id="main"
+          [cdkDropListConnectedTo]="dropTargetIds"
+          (cdkDropListDropped)="drop($event)"
+          [cdkDropListSortingDisabled]="true"
+          class="cdk-drop-list">
+          <div *ngFor="let node of nodes"
+            cdkDrag
+            [cdkDragData]="node.id"
+            (cdkDragMoved)="onDragMoved($event)">
+            <ng-container *ngTemplateOutlet="tmplNode; context: { node: node }"></ng-container>
+          </div>
         </div>
       </div>
     </div>
   </mat-drawer>
 
-  <!-- Editor Area: Displays the form to change the file/folder name -->
   <mat-drawer-content class="editor-area">
     <h2>Code Editor</h2>
     <div *ngIf="selectedNode">
@@ -69,6 +68,7 @@
     </div>
   </mat-drawer-content>
 </mat-drawer-container>
+
 
 <!-- Reusable Template for File Tree -->
 <ng-template #tmplNode
