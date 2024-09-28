@@ -156,6 +156,13 @@ export class AppComponent implements OnDestroy {
 
     const draggedItemId = event.item.data;
     const parentItemId = event.previousContainer.id;
+    const targetNode = this.nodeLookup[this.dropActionTodo!.targetId];
+
+    // Ensure that drops can only happen inside folders, not files
+    if (!targetNode.isFolder && this.dropActionTodo!.action === 'inside') {
+      return; // Block drop if the target is not a folder and action is 'inside'
+    }
+
     const targetListId = this.getParentNodeId(
       this.dropActionTodo!.targetId,
       this.nodes,
@@ -172,11 +179,12 @@ export class AppComponent implements OnDestroy {
         ? this.nodeLookup[targetListId].children
         : this.nodes;
 
+    // Clone or move item based on Shift key press
     const newItem = this.isShiftPressed
       ? {
           ...draggedItem,
-          id: `${draggedItem.id}_copy`,
-          children: draggedItem.isFolder ? [...draggedItem.children] : [],
+          id: `${draggedItem.id}_copy`, // Ensure unique ID
+          children: draggedItem.isFolder ? [...draggedItem.children] : [], // Clone children if folder
         }
       : draggedItem;
 
@@ -201,8 +209,8 @@ export class AppComponent implements OnDestroy {
         break;
 
       case 'inside':
-        this.nodeLookup[this.dropActionTodo!.targetId].children.push(newItem);
-        this.nodeLookup[this.dropActionTodo!.targetId].isExpanded = true;
+        targetNode.children.push(newItem);
+        targetNode.isExpanded = true;
         break;
     }
 

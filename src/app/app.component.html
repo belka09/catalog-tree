@@ -69,8 +69,6 @@
   </mat-drawer-content>
 </mat-drawer-container>
 
-
-<!-- Reusable Template for File Tree -->
 <ng-template #tmplNode
   let-node="node">
   <div class="node-item"
@@ -80,11 +78,10 @@
       (click)="toggleExpandNode(node, $event); selectNode(node, $event)"
       [ngClass]="{ 'selected': isSelected(node) }">
       <mat-icon>{{ node.icon }}</mat-icon>
-      &nbsp;&nbsp;&nbsp;
-      {{ node.id }}
+      &nbsp;&nbsp;&nbsp;{{ node.id }}
     </div>
 
-    <div *ngIf="node.isExpanded && node.children.length"
+    <div *ngIf="node.isExpanded && node.isFolder"
       class="node-children"
       cdkDropList
       [cdkDropListData]="node.children"
@@ -92,6 +89,7 @@
       [cdkDropListConnectedTo]="dropTargetIds"
       (cdkDropListDropped)="drop($event)"
       [cdkDropListSortingDisabled]="true">
+
       <div *ngFor="let child of node.children"
         cdkDrag
         [cdkDragData]="child.id"
