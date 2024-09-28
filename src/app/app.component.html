@@ -1,10 +1,8 @@
 <mat-drawer-container class="main-container">
-  <!-- File Tree Sidebar -->
   <mat-drawer mode="side"
     opened
     class="file-structure">
     <div class="file-tree">
-      <!-- Buttons for adding files and folders -->
       <div class="controls">
         <button mat-flat-button
           color="primary"
@@ -16,7 +14,6 @@
           (click)="addFolders()">Add 2 Folders</button>
       </div>
 
-      <!-- File tree with proper height and drop zones -->
       <div cdkDropList
         [cdkDropListData]="nodes"
         id="main"
@@ -34,18 +31,31 @@
     </div>
   </mat-drawer>
 
-  <!-- Editor Area: Displays the form to change the file/folder name -->
   <mat-drawer-content class="editor-area">
     <h2>Code Editor</h2>
     <div *ngIf="selectedNode">
-      <form (ngSubmit)="changeNodeName()">
+      <form (ngSubmit)="changeNodeName()"
+        class="edit-form">
         <mat-form-field appearance="fill">
           <mat-label>Change Name</mat-label>
           <input matInput
             [(ngModel)]="selectedNodeName"
             name="nodeName"
-            required>
+            required />
         </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Select Icon</mat-label>
+          <mat-select [(ngModel)]="selectedNodeIcon"
+            name="nodeIcon">
+            <mat-option value="folder">Folder</mat-option>
+            <mat-option value="description">File</mat-option>
+            <mat-option value="insert_drive_file">Drive File</mat-option>
+            <mat-option value="cloud">Cloud</mat-option>
+            <mat-option value="storage">Storage</mat-option>
+          </mat-select>
+        </mat-form-field>
+
         <button mat-raised-button
           color="primary"
           type="submit">Save</button>
@@ -57,6 +67,7 @@
   </mat-drawer-content>
 </mat-drawer-container>
 
+
 <!-- Reusable Template for File Tree -->
 <ng-template #tmplNode
   let-node="node">
@@ -66,8 +77,7 @@
     <div class="node-title"
       (click)="toggleExpandNode(node); selectNode(node)"
       [ngClass]="{ 'selected': isSelected(node) }">
-      <!-- Display 'folder' or 'description' based on node type -->
-      <mat-icon>{{ node.isFolder ? 'folder' : 'description' }}</mat-icon>
+      <mat-icon>{{ node.icon }}</mat-icon>
       &nbsp;&nbsp;&nbsp;
       {{ node.id }}
     </div>

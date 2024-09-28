@@ -17,8 +17,8 @@
 .file-button,
 .folder-button {
     width: 48%; /* 50% width minus a little space for margins */
-    border-radius: 0 !important; /* Force buttons to be rectangular */
-    margin: 0 2px; /* Ensure there is a small space between buttons */
+    border-radius: 0 !important;
+    margin: 0 2px;
 }
 
 .file-tree {
@@ -26,7 +26,7 @@
 }
 
 .node-title {
-    padding: 15px 10px; /* Increase padding to make the area larger */
+    padding: 15px 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -52,20 +52,34 @@
 
 .node-children {
     margin-left: 20px;
-    border-left: 2px solid #1976d2; /* Line between parent and children */
+    border-left: 2px solid #1976d2;
 }
 
 .editor-area {
     padding: 20px;
-    background-color: #263238; /* Dark grey background for the editor area */
-    color: white; /* White text */
+    background-color: #263238;
+    color: white;
 }
 
 .editor-area h2 {
-    color: #03a9f4; /* Cyan for headings */
+    color: #03a9f4;
+    margin-bottom: 20px; /* Add some spacing below the title */
 }
 
-/* Highlight only the selected folder's title */
-.selected {
-    background-color: #1e88e5; /* Lighter blue for selected folder */
+/* Form Styling */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Add some space between form fields */
+    width: 40%; /* Form should only take 40% of the editor area */
+    max-width: 400px; /* Ensure it doesn't get too wide on larger screens */
+}
+
+mat-form-field,
+button {
+    width: 100%; /* Ensure form fields and button are full width within the form */
+}
+
+button {
+    border-radius: 0 !important; /* Ensure the button is rectangular */
 }

@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms'; // Import FormsModule for two-way data binding
+import { MatSelectModule } from '@angular/material/select'; // Import MatSelect for dropdown
 
 @Component({
   selector: 'my-app',
@@ -31,6 +32,7 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule for two-way 
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule, // Add MatSelectModule for the dropdown
     FormsModule,
   ],
 })
@@ -41,6 +43,7 @@ export class AppComponent implements OnDestroy {
   dropActionTodo: DropInfo | null = null;
   selectedNode: TreeNode | null = null; // Track the currently selected node
   selectedNodeName: string = ''; // The name of the selected node for editing
+  selectedNodeIcon: string = ''; // The icon of the selected node for editing
 
   private dragMoved$ = new Subject<CdkDragMove>();
   private destroy$ = new Subject<void>();
@@ -92,33 +95,28 @@ export class AppComponent implements OnDestroy {
       return;
     }
 
-    // Ensure that the data-id attribute is present and not null
     const targetId = container.getAttribute('data-id');
     if (!targetId) {
       this.clearDragInfo();
       return;
     }
 
-    // Now it's safe to assign targetId to this.dropActionTodo
     this.dropActionTodo = {
-      targetId: targetId, // Safe assignment after null check
+      targetId: targetId,
     };
 
     const targetRect = container.getBoundingClientRect();
     const oneThird = targetRect.height / 3;
 
     if (event.pointerPosition.y - targetRect.top < oneThird) {
-      // Drop before
       this.dropActionTodo.action = 'before';
       container.classList.add('drop-before');
       container.classList.remove('drop-after', 'drop-inside');
     } else if (event.pointerPosition.y - targetRect.top > 2 * oneThird) {
-      // Drop after
       this.dropActionTodo.action = 'after';
       container.classList.add('drop-after');
       container.classList.remove('drop-before', 'drop-inside');
     } else {
-      // Drop inside
       this.dropActionTodo.action = 'inside';
       container.classList.add('drop-inside');
       container.classList.remove('drop-before', 'drop-after');
@@ -132,16 +130,6 @@ export class AppComponent implements OnDestroy {
 
     const draggedItemId = event.item.data;
     const parentItemId = event.previousContainer.id;
-
-    // Get the target node (dropActionTodo.targetId)
-    const targetNode = this.nodeLookup[this.dropActionTodo.targetId];
-
-    // Block the drop if the target node is not a folder
-    if (!targetNode.isFolder) {
-      console.warn('Cannot drop items into a file.');
-      return;
-    }
-
     const targetListId = this.getParentNodeId(
       this.dropActionTodo!.targetId,
       this.nodes,
@@ -230,6 +218,7 @@ export class AppComponent implements OnDestroy {
   selectNode(node: TreeNode) {
     this.selectedNode = node;
     this.selectedNodeName = node.id; // Prepopulate the input field with the current name
+    this.selectedNodeIcon = node.icon || 'description'; // Prepopulate the icon field with the current icon or a default
   }
 
   // Toggle the node expansion/collapse on click
@@ -237,23 +226,17 @@ export class AppComponent implements OnDestroy {
     node.isExpanded = !node.isExpanded;
   }
 
-  // Change the name of the selected node and update nodeLookup
+  // Change the name and icon of the selected node
   changeNodeName() {
     if (this.selectedNode) {
-      // Remove the old reference in nodeLookup
-      delete this.nodeLookup[this.selectedNode.id];
+      delete this.nodeLookup[this.selectedNode.id]; // Remove old reference in nodeLookup
 
-      // Update the node's name
+      // Update the node's name and icon
       this.selectedNode.id = this.selectedNodeName;
+      this.selectedNode.icon = this.selectedNodeIcon;
 
-      // Add the updated node back to nodeLookup with the new name
+      // Add updated node back to nodeLookup
       this.nodeLookup[this.selectedNode.id] = this.selectedNode;
-
-      // Update dropTargetIds to ensure it matches the new name
-      const index = this.dropTargetIds.indexOf(this.selectedNode.id);
-      if (index !== -1) {
-        this.dropTargetIds[index] = this.selectedNode.id;
-      }
     }
   }
 
@@ -263,26 +246,27 @@ export class AppComponent implements OnDestroy {
 
   // Add 2 random files inside the selected node or root if no node selected
   addFiles() {
-    const targetNode = this.selectedNode ?? this.nodes; // If no node is selected, use root (this.nodes)
+    const targetNode = this.selectedNode ?? this.nodes;
 
     for (let i = 0; i < 2; i++) {
       const randomName = `file-${Math.random().toString(36).substring(2, 8)}`;
-      const newFile = { id: randomName, children: [], isFolder: false };
+      const newFile = {
+        id: randomName,
+        children: [],
+        isFolder: false,
+        icon: 'description',
+      };
 
       if (Array.isArray(targetNode)) {
-        // Add to the root if targetNode is the root (this.nodes)
         targetNode.push(newFile);
       } else {
-        // Add to the selected node's children
         targetNode.children.push(newFile);
       }
 
-      // Update the dropTargetIds and nodeLookup to include the new file
       this.dropTargetIds.push(newFile.id);
       this.nodeLookup[newFile.id] = newFile;
     }
 
-    // Ensure the selected node is expanded if it's a folder
     if (this.selectedNode) {
       this.selectedNode.isExpanded = true;
     }
@@ -290,30 +274,27 @@ export class AppComponent implements OnDestroy {
 
   // Add 2 folders without any files inside, in the selected node or root if no node selected
   addFolders() {
-    const targetNode = this.selectedNode ?? this.nodes; // If no node is selected, use root (this.nodes)
+    const targetNode = this.selectedNode ?? this.nodes;
 
     for (let i = 0; i < 2; i++) {
       const randomName = `folder-${Math.random().toString(36).substring(2, 8)}`;
       const newFolder = {
         id: randomName,
         children: [],
-        isFolder: true, // Explicitly mark as folder
+        isFolder: true,
+        icon: 'folder',
       };
 
       if (Array.isArray(targetNode)) {
-        // Add to the root if targetNode is the root (this.nodes)
         targetNode.push(newFolder);
       } else {
-        // Add to the selected node's children
         targetNode.children.push(newFolder);
       }
 
-      // Update the dropTargetIds and nodeLookup to include the new folder
       this.dropTargetIds.push(newFolder.id);
       this.nodeLookup[newFolder.id] = newFolder;
     }
 
-    // Ensure the selected node is expanded if it's a folder
     if (this.selectedNode) {
       this.selectedNode.isExpanded = true;
     }
