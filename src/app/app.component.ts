@@ -43,8 +43,7 @@ export class AppComponent implements OnDestroy {
   dropActionTodo: DropInfo | null = null;
   selectedNode: TreeNode | null = null;
   selectedNodeName: string = '';
-  selectedNodeIcon: string = 'description'; // Default icon value
-  isShiftPressed: boolean = false;
+  selectedNodeIcon: string = 'description';
   availableIcons: string[] = [
     'description',
     'folder',
@@ -52,6 +51,7 @@ export class AppComponent implements OnDestroy {
     'storage',
     'list',
   ];
+  isShiftPressed: boolean = false;
 
   private dragMoved$ = new Subject<CdkDragMove>();
   private destroy$ = new Subject<void>();
@@ -172,24 +172,21 @@ export class AppComponent implements OnDestroy {
         ? this.nodeLookup[targetListId].children
         : this.nodes;
 
-    // Clone or move item based on Shift key press
     const newItem = this.isShiftPressed
       ? {
           ...draggedItem,
-          id: `${draggedItem.id}_copy`, // Ensure unique ID
-          children: draggedItem.isFolder ? [...draggedItem.children] : [], // Clone children if folder
+          id: `${draggedItem.id}_copy`,
+          children: draggedItem.isFolder ? [...draggedItem.children] : [],
         }
       : draggedItem;
 
     if (!this.isShiftPressed) {
-      // Remove the item from the old container if moving
       const index = oldItemContainer.findIndex((c) => c.id === draggedItemId);
       if (index > -1) {
         oldItemContainer.splice(index, 1);
       }
     }
 
-    // Add item to new container based on the drop action (before, after, or inside)
     switch (this.dropActionTodo!.action) {
       case 'before':
       case 'after':
@@ -209,7 +206,6 @@ export class AppComponent implements OnDestroy {
         break;
     }
 
-    // If a new item was created (copying), add it to the node lookup
     if (this.isShiftPressed) {
       this.nodeLookup[newItem.id] = newItem;
     }
@@ -256,23 +252,25 @@ export class AppComponent implements OnDestroy {
     this.document
       .querySelectorAll('.drop-inside')
       .forEach((element) => element.classList.remove('drop-inside'));
+
+    this.document
+      .querySelectorAll('.dragging')
+      .forEach((element) => element.classList.remove('dragging'));
   }
 
-  selectNode(node: TreeNode) {
+  selectNode(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
     this.selectedNode = node;
     this.selectedNodeName = node.id;
-    this.selectedNodeIcon = node.icon || 'description'; // Set default icon if undefined
-  }
-
-  selectRoot() {
-    this.selectedNode = null;
+    this.selectedNodeIcon = node.icon || 'description';
   }
 
   isAddEnabled(): boolean {
     return !this.selectedNode || this.selectedNode.isFolder === true;
   }
 
-  toggleExpandNode(node: TreeNode) {
+  toggleExpandNode(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
     node.isExpanded = !node.isExpanded;
   }
 
@@ -281,7 +279,7 @@ export class AppComponent implements OnDestroy {
       delete this.nodeLookup[this.selectedNode.id];
 
       this.selectedNode.id = this.selectedNodeName;
-      this.selectedNode.icon = this.selectedNodeIcon; // Update icon
+      this.selectedNode.icon = this.selectedNodeIcon;
 
       this.nodeLookup[this.selectedNode.id] = this.selectedNode;
 
@@ -348,5 +346,9 @@ export class AppComponent implements OnDestroy {
     if (this.selectedNode) {
       this.selectedNode.isExpanded = true;
     }
+  }
+
+  selectRoot() {
+    this.selectedNode = null;
   }
 }

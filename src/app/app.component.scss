@@ -17,7 +17,7 @@
 .file-button,
 .folder-button {
     width: 48%;
-    border-radius: 0 !important;
+    border-radius: 0;
     margin: 0 2px;
 }
 
@@ -31,6 +31,11 @@
     display: flex;
     align-items: center;
     transition: background-color 0.3s ease;
+}
+
+/* Remove blue highlight during dragging */
+.node-title.dragging {
+    background-color: transparent !important;
 }
 
 .node-title:hover {
@@ -79,5 +84,9 @@ button {
 }
 
 button {
-    border-radius: 0 !important;
+    border-radius: 0;
+}
+
+.selected {
+    background-color: #1e88e5;
 }
