@@ -43,7 +43,7 @@ export class AppComponent implements OnDestroy {
   dropActionTodo: DropInfo | null = null;
   selectedNode: TreeNode | null = null;
   selectedNodeName: string = '';
-  selectedNodeIcon: string = 'description';
+  selectedNodeIcon: string = 'description'; // Default icon value
   isShiftPressed: boolean = false;
   availableIcons: string[] = [
     'description',
@@ -172,21 +172,24 @@ export class AppComponent implements OnDestroy {
         ? this.nodeLookup[targetListId].children
         : this.nodes;
 
+    // Clone or move item based on Shift key press
     const newItem = this.isShiftPressed
       ? {
           ...draggedItem,
-          id: `${draggedItem.id}_copy`,
-          children: draggedItem.isFolder ? [...draggedItem.children] : [],
+          id: `${draggedItem.id}_copy`, // Ensure unique ID
+          children: draggedItem.isFolder ? [...draggedItem.children] : [], // Clone children if folder
         }
       : draggedItem;
 
     if (!this.isShiftPressed) {
+      // Remove the item from the old container if moving
       const index = oldItemContainer.findIndex((c) => c.id === draggedItemId);
       if (index > -1) {
         oldItemContainer.splice(index, 1);
       }
     }
 
+    // Add item to new container based on the drop action (before, after, or inside)
     switch (this.dropActionTodo!.action) {
       case 'before':
       case 'after':
@@ -206,6 +209,7 @@ export class AppComponent implements OnDestroy {
         break;
     }
 
+    // If a new item was created (copying), add it to the node lookup
     if (this.isShiftPressed) {
       this.nodeLookup[newItem.id] = newItem;
     }
@@ -257,7 +261,7 @@ export class AppComponent implements OnDestroy {
   selectNode(node: TreeNode) {
     this.selectedNode = node;
     this.selectedNodeName = node.id;
-    this.selectedNodeIcon = node.icon || 'description';
+    this.selectedNodeIcon = node.icon || 'description'; // Set default icon if undefined
   }
 
   selectRoot() {
@@ -277,7 +281,7 @@ export class AppComponent implements OnDestroy {
       delete this.nodeLookup[this.selectedNode.id];
 
       this.selectedNode.id = this.selectedNodeName;
-      this.selectedNode.icon = this.selectedNodeIcon;
+      this.selectedNode.icon = this.selectedNodeIcon; // Update icon
 
       this.nodeLookup[this.selectedNode.id] = this.selectedNode;
 

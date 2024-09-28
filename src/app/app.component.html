@@ -52,6 +52,7 @@
             required />
         </mat-form-field>
 
+        <!-- Select Icon Field -->
         <mat-form-field appearance="fill">
           <mat-label>Select Icon</mat-label>
           <mat-select [(ngModel)]="selectedNodeIcon"
@@ -73,18 +74,17 @@
   </mat-drawer-content>
 </mat-drawer-container>
 
-
+<!-- Reusable Template for File Tree -->
 <ng-template #tmplNode
   let-node="node">
   <div class="node-item"
     [attr.data-id]="node.id"
     [attr.id]="'node-' + node.id">
     <div class="node-title"
-      (click)="toggleExpandNode(node); selectNode(node)"
+      (click)="$event.stopPropagation(); toggleExpandNode(node); selectNode(node)"
       [ngClass]="{ 'selected': isSelected(node) }">
-      <mat-icon>{{ node.icon }}</mat-icon>
-      &nbsp;&nbsp;&nbsp;
-      {{ node.id }}
+      <mat-icon>{{ node.icon || 'description' }}</mat-icon> <!-- Use node.icon -->
+      &nbsp;&nbsp;&nbsp; {{ node.id }}
     </div>
 
     <div *ngIf="node.isExpanded && node.children.length"
@@ -98,6 +98,7 @@
       <div *ngFor="let child of node.children"
         cdkDrag
         [cdkDragData]="child.id"
+        (click)="$event.stopPropagation(); selectNode(child)"
         (cdkDragMoved)="onDragMoved($event)">
         <ng-container *ngTemplateOutlet="tmplNode; context: { node: child }"></ng-container>
       </div>
