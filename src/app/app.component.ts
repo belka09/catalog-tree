@@ -9,18 +9,19 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 
 interface FoodNode {
   name: string;
-  icon?: string; // Added icon property
+  icon?: string;
   children?: FoodNode[];
 }
 
 const TREE_DATA: FoodNode[] = [
   {
     name: 'Folder 1',
-    icon: 'folder', // Default icon
+    icon: 'folder',
     children: [
       { name: 'Test', icon: 'insert_drive_file' },
       { name: 'Test 2', icon: 'insert_drive_file' },
@@ -28,11 +29,11 @@ const TREE_DATA: FoodNode[] = [
   },
   {
     name: 'Folder 2',
-    icon: 'folder', // Default icon
+    icon: 'folder',
     children: [
       {
         name: 'Sub-folder 1',
-        icon: 'folder', // Default icon
+        icon: 'folder',
         children: [
           { name: 'Test3', icon: 'insert_drive_file' },
           { name: 'Test 4', icon: 'insert_drive_file' },
@@ -40,7 +41,7 @@ const TREE_DATA: FoodNode[] = [
       },
       {
         name: 'Sub-folder 2',
-        icon: 'folder', // Default icon
+        icon: 'folder',
         children: [{ name: 'Test 5', icon: 'insert_drive_file' }],
       },
     ],
@@ -51,7 +52,7 @@ interface ExampleFlatNode {
   expandable: boolean;
   name: string;
   level: number;
-  icon: string; // Added icon property
+  icon: string;
 }
 
 @Component({
@@ -65,24 +66,43 @@ interface ExampleFlatNode {
     MatFormField,
     MatLabel,
     MatInputModule,
-  ], // Added FormsModule
+    MatSelectModule,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'catalog-tree';
   selectedNode: ExampleFlatNode | null = null;
-  selectedFoodNode: FoodNode | null = null; // Reference to the selected FoodNode
+  selectedFoodNode: FoodNode | null = null;
 
   fileCounter = 1;
   folderCounter = 1;
 
+  fileIcons: string[] = [
+    'insert_drive_file',
+    'description',
+    'image',
+    'music_note',
+    'video_library',
+  ];
+
+  folderIcons: string[] = ['folder', 'folder_open', 'archive', 'cloud', 'code'];
+
+  get iconOptions(): string[] {
+    return this.isSelectedNodeFolder ? this.folderIcons : this.fileIcons;
+  }
+
+  get isSelectedNodeFolder(): boolean {
+    return this.selectedFoodNode?.children !== undefined;
+  }
+
   private _transformer = (node: FoodNode, level: number): ExampleFlatNode => {
     return {
-      expandable: !!node.children,
+      expandable: !!node.children && node.children.length > 0,
       name: node.name,
       level: level,
-      icon: node.icon || (node.children ? 'folder' : 'insert_drive_file'), // Assign default icon
+      icon: node.icon || (node.children ? 'folder' : 'insert_drive_file'),
     };
   };
 

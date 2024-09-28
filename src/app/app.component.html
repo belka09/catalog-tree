@@ -54,11 +54,15 @@
       </mat-form-field>
       <mat-form-field appearance="fill">
         <mat-label>Icon</mat-label>
-        <input matInput
-          [(ngModel)]="selectedFoodNode!.icon"
+        <mat-select [(ngModel)]="selectedFoodNode!.icon"
           name="icon"
-          placeholder="e.g., folder, insert_drive_file"
-          (ngModelChange)="updateTree()" />
+          (selectionChange)="updateTree()">
+          @for(icon of iconOptions; track icon) {
+          <mat-option [value]="icon">
+            <mat-icon>{{icon}}</mat-icon> {{icon}}
+          </mat-option>
+          }
+        </mat-select>
       </mat-form-field>
     </form>
     } @else {
