@@ -9,11 +9,11 @@
         <button mat-flat-button
           color="primary"
           class="file-button"
-          (click)="addFiles()">Add 50 Files</button>
+          (click)="addFiles()">Add 2 Files</button>
         <button mat-flat-button
           color="accent"
           class="folder-button"
-          (click)="addFolders()">Add 50 Folders</button>
+          (click)="addFolders()">Add 2 Folders</button>
       </div>
 
       <!-- File tree with proper height and drop zones -->
@@ -34,9 +34,26 @@
     </div>
   </mat-drawer>
 
-  <!-- Editor Area -->
+  <!-- Editor Area: Displays the form to change the file/folder name -->
   <mat-drawer-content class="editor-area">
     <h2>Code Editor</h2>
+    <div *ngIf="selectedNode">
+      <form (ngSubmit)="changeNodeName()">
+        <mat-form-field appearance="fill">
+          <mat-label>Change Name</mat-label>
+          <input matInput
+            [(ngModel)]="selectedNodeName"
+            name="nodeName"
+            required>
+        </mat-form-field>
+        <button mat-raised-button
+          color="primary"
+          type="submit">Save</button>
+      </form>
+    </div>
+    <div *ngIf="!selectedNode">
+      <p>Select a file or folder to change its name</p>
+    </div>
   </mat-drawer-content>
 </mat-drawer-container>
 

@@ -12,6 +12,9 @@ import { DropInfo, TreeNode, demoData } from './data';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'my-app',
@@ -26,6 +29,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
   ],
 })
 export class AppComponent implements OnDestroy {
@@ -34,6 +40,7 @@ export class AppComponent implements OnDestroy {
   nodeLookup: { [id: string]: TreeNode } = {};
   dropActionTodo: DropInfo | null = null;
   selectedNode: TreeNode | null = null; // Track the currently selected node
+  selectedNodeName: string = ''; // The name of the selected node for editing
 
   private dragMoved$ = new Subject<CdkDragMove>();
   private destroy$ = new Subject<void>();
@@ -92,7 +99,7 @@ export class AppComponent implements OnDestroy {
       return;
     }
 
-    // Now it's safe to assign targetId to dropActionTodo
+    // Now it's safe to assign targetId to this.dropActionTodo
     this.dropActionTodo = {
       targetId: targetId, // Safe assignment after null check
     };
@@ -209,12 +216,42 @@ export class AppComponent implements OnDestroy {
       .forEach((element) => element.classList.remove('drop-inside'));
   }
 
+  // Set the clicked node as the selected node and update the input field
+  selectNode(node: TreeNode) {
+    this.selectedNode = node;
+    this.selectedNodeName = node.id; // Prepopulate the input field with the current name
+  }
+
   // Toggle the node expansion/collapse on click
   toggleExpandNode(node: TreeNode) {
     node.isExpanded = !node.isExpanded;
   }
 
-  // Generate 2 random files inside the selected node or root if no node selected
+  // Change the name of the selected node and update nodeLookup
+  changeNodeName() {
+    if (this.selectedNode) {
+      // Remove the old reference in nodeLookup
+      delete this.nodeLookup[this.selectedNode.id];
+
+      // Update the node's name
+      this.selectedNode.id = this.selectedNodeName;
+
+      // Add the updated node back to nodeLookup with the new name
+      this.nodeLookup[this.selectedNode.id] = this.selectedNode;
+
+      // Update dropTargetIds to ensure it matches the new name
+      const index = this.dropTargetIds.indexOf(this.selectedNode.id);
+      if (index !== -1) {
+        this.dropTargetIds[index] = this.selectedNode.id;
+      }
+    }
+  }
+
+  isSelected(node: TreeNode): boolean {
+    return this.selectedNode ? this.selectedNode.id === node.id : false;
+  }
+
+  // Add 2 random files inside the selected node or root if no node selected
   addFiles() {
     const targetNode = this.selectedNode ?? this.nodes; // If no node is selected, use root (this.nodes)
 
@@ -241,7 +278,7 @@ export class AppComponent implements OnDestroy {
     }
   }
 
-  // Generate 2 folders, each with an empty file inside, in the selected node or root if no node selected
+  // Add 2 folders, each with an empty file inside, in the selected node or root if no node selected
   addFolders() {
     const targetNode = this.selectedNode ?? this.nodes; // If no node is selected, use root (this.nodes)
 
@@ -275,15 +312,5 @@ export class AppComponent implements OnDestroy {
     if (this.selectedNode) {
       this.selectedNode.isExpanded = true;
     }
-  }
-
-  // Method to set the clicked node as the selected node
-  selectNode(node: TreeNode) {
-    this.selectedNode = node; // Update the selected node reference
-  }
-
-  // Check if the node is the currently selected node
-  isSelected(node: TreeNode): boolean {
-    return this.selectedNode ? this.selectedNode.id === node.id : false;
   }
 }
