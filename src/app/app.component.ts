@@ -14,8 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms'; // Import FormsModule for two-way data binding
-import { MatSelectModule } from '@angular/material/select'; // Import MatSelect for dropdown
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'my-app',
@@ -32,7 +32,7 @@ import { MatSelectModule } from '@angular/material/select'; // Import MatSelect 
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule, // Add MatSelectModule for the dropdown
+    MatSelectModule,
     FormsModule,
   ],
 })
@@ -41,9 +41,17 @@ export class AppComponent implements OnDestroy {
   dropTargetIds: string[] = [];
   nodeLookup: { [id: string]: TreeNode } = {};
   dropActionTodo: DropInfo | null = null;
-  selectedNode: TreeNode | null = null; // Track the currently selected node
-  selectedNodeName: string = ''; // The name of the selected node for editing
-  selectedNodeIcon: string = ''; // The icon of the selected node for editing
+  selectedNode: TreeNode | null = null;
+  selectedNodeName: string = '';
+  selectedNodeIcon: string = 'description';
+  isShiftPressed: boolean = false;
+  availableIcons: string[] = [
+    'description',
+    'folder',
+    'cloud',
+    'storage',
+    'list',
+  ];
 
   private dragMoved$ = new Subject<CdkDragMove>();
   private destroy$ = new Subject<void>();
@@ -54,11 +62,29 @@ export class AppComponent implements OnDestroy {
     this.dragMoved$
       .pipe(debounceTime(50), takeUntil(this.destroy$))
       .subscribe((event) => this.handleDragMoved(event));
+
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+    document.addEventListener('keyup', this.onKeyUp.bind(this));
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+
+    document.removeEventListener('keydown', this.onKeyDown.bind(this));
+    document.removeEventListener('keyup', this.onKeyUp.bind(this));
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Shift') {
+      this.isShiftPressed = true;
+    }
+  }
+
+  onKeyUp(event: KeyboardEvent) {
+    if (event.key === 'Shift') {
+      this.isShiftPressed = false;
+    }
   }
 
   prepareDragDrop(nodes: TreeNode[]) {
@@ -146,8 +172,20 @@ export class AppComponent implements OnDestroy {
         ? this.nodeLookup[targetListId].children
         : this.nodes;
 
-    let i = oldItemContainer.findIndex((c) => c.id === draggedItemId);
-    oldItemContainer.splice(i, 1);
+    const newItem = this.isShiftPressed
+      ? {
+          ...draggedItem,
+          id: `${draggedItem.id}_copy`,
+          children: draggedItem.isFolder ? [...draggedItem.children] : [],
+        }
+      : draggedItem;
+
+    if (!this.isShiftPressed) {
+      const index = oldItemContainer.findIndex((c) => c.id === draggedItemId);
+      if (index > -1) {
+        oldItemContainer.splice(index, 1);
+      }
+    }
 
     switch (this.dropActionTodo!.action) {
       case 'before':
@@ -155,19 +193,21 @@ export class AppComponent implements OnDestroy {
         const targetIndex = newContainer.findIndex(
           (c) => c.id === this.dropActionTodo!.targetId
         );
-        if (this.dropActionTodo!.action == 'before') {
-          newContainer.splice(targetIndex, 0, draggedItem);
+        if (this.dropActionTodo!.action === 'before') {
+          newContainer.splice(targetIndex, 0, newItem);
         } else {
-          newContainer.splice(targetIndex + 1, 0, draggedItem);
+          newContainer.splice(targetIndex + 1, 0, newItem);
         }
         break;
 
       case 'inside':
-        this.nodeLookup[this.dropActionTodo!.targetId].children.push(
-          draggedItem
-        );
+        this.nodeLookup[this.dropActionTodo!.targetId].children.push(newItem);
         this.nodeLookup[this.dropActionTodo!.targetId].isExpanded = true;
         break;
+    }
+
+    if (this.isShiftPressed) {
+      this.nodeLookup[newItem.id] = newItem;
     }
 
     this.clearDragInfo(true);
@@ -216,31 +256,35 @@ export class AppComponent implements OnDestroy {
 
   selectNode(node: TreeNode) {
     this.selectedNode = node;
-    this.selectedNodeName = node.id; // Prepopulate the input field with the current name
-    this.selectedNodeIcon = node.icon || 'description'; // Prepopulate the icon field with the current icon
+    this.selectedNodeName = node.id;
+    this.selectedNodeIcon = node.icon || 'description';
   }
 
-  // Method to check if a folder is selected or if no node is selected (root level)
+  selectRoot() {
+    this.selectedNode = null;
+  }
+
   isAddEnabled(): boolean {
     return !this.selectedNode || this.selectedNode.isFolder === true;
   }
 
-  // Toggle the node expansion/collapse on click
   toggleExpandNode(node: TreeNode) {
     node.isExpanded = !node.isExpanded;
   }
 
-  // Change the name and icon of the selected node
   changeNodeName() {
     if (this.selectedNode) {
-      delete this.nodeLookup[this.selectedNode.id]; // Remove old reference in nodeLookup
+      delete this.nodeLookup[this.selectedNode.id];
 
-      // Update the node's name and icon
       this.selectedNode.id = this.selectedNodeName;
       this.selectedNode.icon = this.selectedNodeIcon;
 
-      // Add updated node back to nodeLookup
       this.nodeLookup[this.selectedNode.id] = this.selectedNode;
+
+      const index = this.dropTargetIds.indexOf(this.selectedNode.id);
+      if (index !== -1) {
+        this.dropTargetIds[index] = this.selectedNode.id;
+      }
     }
   }
 
@@ -248,7 +292,6 @@ export class AppComponent implements OnDestroy {
     return this.selectedNode ? this.selectedNode.id === node.id : false;
   }
 
-  // Add 2 random files inside the selected node or root if no node selected
   addFiles() {
     const targetNode = this.selectedNode ?? this.nodes;
 
@@ -276,7 +319,6 @@ export class AppComponent implements OnDestroy {
     }
   }
 
-  // Add 2 folders without any files inside, in the selected node or root if no node selected
   addFolders() {
     const targetNode = this.selectedNode ?? this.nodes;
 

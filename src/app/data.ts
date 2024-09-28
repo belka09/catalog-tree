@@ -3,7 +3,7 @@ export interface TreeNode {
   children: TreeNode[];
   isExpanded?: boolean;
   isFolder?: boolean;
-  icon?: string; // Add icon property to distinguish the icon
+  icon?: string;
 }
 
 export interface DropInfo {

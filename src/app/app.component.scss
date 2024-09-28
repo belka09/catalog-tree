@@ -4,7 +4,7 @@
 
 .file-structure {
     width: 300px;
-    background-color: #0d47a1; /* Dark blue */
+    background-color: #0d47a1;
     color: white;
 }
 
@@ -16,7 +16,7 @@
 
 .file-button,
 .folder-button {
-    width: 48%; /* 50% width minus a little space for margins */
+    width: 48%;
     border-radius: 0 !important;
     margin: 0 2px;
 }
@@ -34,20 +34,19 @@
 }
 
 .node-title:hover {
-    background-color: #1e88e5; /* Hover effect for better visibility */
+    background-color: #1e88e5;
 }
 
-/* Add visual feedback for drop zones */
 .drop-before {
-    border-top: 2px solid #1e88e5; /* Blue line to indicate drop before */
+    border-top: 2px solid #1e88e5;
 }
 
 .drop-after {
-    border-bottom: 2px solid #1e88e5; /* Blue line to indicate drop after */
+    border-bottom: 2px solid #1e88e5;
 }
 
 .drop-inside {
-    background-color: rgba(30, 136, 229, 0.3); /* Light blue background for inside drop */
+    background-color: rgba(30, 136, 229, 0.3);
 }
 
 .node-children {
@@ -63,23 +62,22 @@
 
 .editor-area h2 {
     color: #03a9f4;
-    margin-bottom: 20px; /* Add some spacing below the title */
+    margin-bottom: 20px;
 }
 
-/* Form Styling */
 .edit-form {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Add some space between form fields */
-    width: 40%; /* Form should only take 40% of the editor area */
-    max-width: 400px; /* Ensure it doesn't get too wide on larger screens */
+    gap: 20px;
+    width: 40%;
+    max-width: 400px;
 }
 
 mat-form-field,
 button {
-    width: 100%; /* Ensure form fields and button are full width within the form */
+    width: 100%;
 }
 
 button {
-    border-radius: 0 !important; /* Ensure the button is rectangular */
+    border-radius: 0 !important;
 }
