@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+.left-panel {
+    width: 300px;
+    background-color: #1e1e1e;
+    padding: 10px;
+    border-right: 1px solid #333;
+
+    .button-panel {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 20px;
+
+        button {
+            width: 50%;
+            border-radius: 0;
+        }
+    }
+
+    .file-tree {
+        height: calc(100% - 60px);
+        overflow-y: auto;
+    }
+}
+
+.right-panel {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #1e1e1e;
+
+    h3 {
+        margin: 0;
+        margin-bottom: 20px;
+        color: #ffffff;
+    }
+
+    mat-form-field {
+        width: 100%;
+        color: #ffffff;
+
+        input {
+            color: #ffffff;
+        }
+
+        .mat-form-field-underline {
+            background-color: #ffffff;
+        }
+
+        .mat-form-field-label {
+            color: #ffffff;
+        }
+    }
+}
+
+mat-tree {
+    color: #e0e0e0;
+
+    mat-icon {
+        color: #ffffff;
+    }
+}
+
+.flat-button {
+    background: none;
+    border-radius: 0;
+}
+
+.node-icon {
+    margin-right: 8px;
+    color: #ffffff;
+}
+
+.selected {
+    background-color: #3f51b5;
+    color: white;
+}
+
+button[mat-flat-button] {
+    border-radius: 0;
+}
+
+button[mat-flat-button][color='accent'] {
+    background-color: #ff4081;
+
+    &:hover {
+        background-color: #f50057;
+    }
+}
+
+button[mat-flat-button][color='primary'] {
+    background-color: #3f51b5;
+
+    &:hover {
+        background-color: #303f9f;
+    }
+}
