@@ -1,3 +1,4 @@
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
@@ -7,27 +8,40 @@ import {
 } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
 
 interface FoodNode {
   name: string;
+  icon?: string; // Added icon property
   children?: FoodNode[];
 }
 
 const TREE_DATA: FoodNode[] = [
   {
     name: 'Folder 1',
-    children: [{ name: 'Test' }, { name: 'Test 2' }],
+    icon: 'folder', // Default icon
+    children: [
+      { name: 'Test', icon: 'insert_drive_file' },
+      { name: 'Test 2', icon: 'insert_drive_file' },
+    ],
   },
   {
     name: 'Folder 2',
+    icon: 'folder', // Default icon
     children: [
       {
         name: 'Sub-folder 1',
-        children: [{ name: 'Test3' }, { name: 'Test 4' }],
+        icon: 'folder', // Default icon
+        children: [
+          { name: 'Test3', icon: 'insert_drive_file' },
+          { name: 'Test 4', icon: 'insert_drive_file' },
+        ],
       },
       {
         name: 'Sub-folder 2',
-        children: [{ name: 'Test 5' }],
+        icon: 'folder', // Default icon
+        children: [{ name: 'Test 5', icon: 'insert_drive_file' }],
       },
     ],
   },
@@ -37,18 +51,28 @@ interface ExampleFlatNode {
   expandable: boolean;
   name: string;
   level: number;
+  icon: string; // Added icon property
 }
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MatTreeModule, MatButtonModule, MatIconModule],
+  imports: [
+    MatTreeModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    MatFormField,
+    MatLabel,
+    MatInputModule,
+  ], // Added FormsModule
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'catalog-tree';
   selectedNode: ExampleFlatNode | null = null;
+  selectedFoodNode: FoodNode | null = null; // Reference to the selected FoodNode
 
   fileCounter = 1;
   folderCounter = 1;
@@ -58,6 +82,7 @@ export class AppComponent {
       expandable: !!node.children,
       name: node.name,
       level: level,
+      icon: node.icon || (node.children ? 'folder' : 'insert_drive_file'), // Assign default icon
     };
   };
 
@@ -95,48 +120,50 @@ export class AppComponent {
 
   selectNode(flatNode: ExampleFlatNode) {
     this.selectedNode = flatNode;
-    console.log('Selected node:', this.selectedNode);
+    this.selectedFoodNode = this.findNodeByName(
+      this.dataSource.data,
+      flatNode.name
+    );
+    console.log('Selected node:', this.selectedFoodNode);
   }
 
   add50Items() {
-    const parentNode = this.findNodeByName(
-      this.dataSource.data,
-      this.selectedNode?.name
-    );
-    if (parentNode) {
-      if (!parentNode.children) {
-        parentNode.children = [];
-      }
-
-      for (let i = 0; i < 50; i++) {
-        parentNode.children.push({ name: this.generateFileName() });
-      }
-      this.updateTree();
+    const parentNode = this.selectedFoodNode
+      ? this.selectedFoodNode
+      : { name: 'Root', children: this.dataSource.data };
+    if (!parentNode.children) {
+      parentNode.children = [];
     }
+
+    for (let i = 0; i < 50; i++) {
+      parentNode.children.push({
+        name: this.generateFileName(),
+        icon: 'insert_drive_file',
+      });
+    }
+    this.updateTree();
   }
 
   add50Folders() {
-    const parentNode = this.findNodeByName(
-      this.dataSource.data,
-      this.selectedNode?.name
-    );
-    if (parentNode) {
-      if (!parentNode.children) {
-        parentNode.children = [];
-      }
-
-      for (let i = 0; i < 50; i++) {
-        const folderName = this.generateFolderName();
-        parentNode.children.push({
-          name: folderName,
-          children: [],
-        });
-      }
-
-      console.log('After adding folders:', parentNode.children);
-
-      this.updateTree();
+    const parentNode = this.selectedFoodNode
+      ? this.selectedFoodNode
+      : { name: 'Root', children: this.dataSource.data };
+    if (!parentNode.children) {
+      parentNode.children = [];
     }
+
+    for (let i = 0; i < 50; i++) {
+      const folderName = this.generateFolderName();
+      parentNode.children.push({
+        name: folderName,
+        icon: 'folder',
+        children: [],
+      });
+    }
+
+    console.log('After adding folders:', parentNode.children);
+
+    this.updateTree();
   }
 
   updateTree() {
@@ -162,6 +189,10 @@ export class AppComponent {
       );
       if (restoredSelectedNode) {
         this.selectedNode = restoredSelectedNode;
+        this.selectedFoodNode = this.findNodeByName(
+          this.dataSource.data,
+          restoredSelectedNode.name
+        );
       }
     }
 

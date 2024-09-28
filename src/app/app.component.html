@@ -18,7 +18,7 @@
         (click)="selectNode(node)">
         <button mat-icon-button
           disabled></button>
-        <mat-icon class="node-icon">insert_drive_file</mat-icon>
+        <mat-icon class="node-icon">{{node.icon}}</mat-icon>
         {{node.name}}
       </mat-tree-node>
 
@@ -35,7 +35,7 @@
             {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
           </mat-icon>
         </button>
-        <mat-icon class="node-icon">folder</mat-icon>
+        <mat-icon class="node-icon">{{node.icon}}</mat-icon>
         {{node.name}}
       </mat-tree-node>
     </mat-tree>
@@ -43,13 +43,26 @@
 
   <div class="right-panel">
     <h3>Edit</h3>
-    <!-- <form *ngIf="selectedNode">
+    @if(selectedFoodNode) {
+    <form>
       <mat-form-field appearance="fill">
         <mat-label>Name</mat-label>
         <input matInput
-          [(ngModel)]="selectedNode.name" />
+          [(ngModel)]="selectedFoodNode!.name"
+          name="name"
+          (ngModelChange)="updateTree()" />
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Icon</mat-label>
+        <input matInput
+          [(ngModel)]="selectedFoodNode!.icon"
+          name="icon"
+          placeholder="e.g., folder, insert_drive_file"
+          (ngModelChange)="updateTree()" />
       </mat-form-field>
     </form>
-    <p *ngIf="!selectedNode">Please select the node</p> -->
+    } @else {
+    <p>Please select a node</p>
+    }
   </div>
 </div>
