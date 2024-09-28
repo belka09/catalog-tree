@@ -1,72 +1,73 @@
-<div class="container">
-  <div class="left-panel">
-    <div class="button-panel">
-      <button mat-flat-button
-        color="primary"
-        (click)="add50Items()">Create 50 files</button>
-      <button mat-flat-button
-        color="accent"
-        (click)="add50Folders()">Create 50 folders</button>
+<mat-drawer-container class="main-container">
+  <!-- File Tree Sidebar -->
+  <mat-drawer mode="side"
+    opened
+    class="file-structure">
+    <div class="file-tree">
+      <!-- Buttons for adding files and folders -->
+      <div class="controls">
+        <button mat-flat-button
+          color="primary"
+          class="file-button"
+          (click)="addFiles()">Add 50 Files</button>
+        <button mat-flat-button
+          color="accent"
+          class="folder-button"
+          (click)="addFolders()">Add 50 Folders</button>
+      </div>
+
+      <!-- File tree with proper height and drop zones -->
+      <div cdkDropList
+        [cdkDropListData]="nodes"
+        id="main"
+        [cdkDropListConnectedTo]="dropTargetIds"
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListSortingDisabled]="true"
+        class="cdk-drop-list">
+        <div *ngFor="let node of nodes"
+          cdkDrag
+          [cdkDragData]="node.id"
+          (cdkDragMoved)="onDragMoved($event)">
+          <ng-container *ngTemplateOutlet="tmplNode; context: { node: node }"></ng-container>
+        </div>
+      </div>
+    </div>
+  </mat-drawer>
+
+  <!-- Editor Area -->
+  <mat-drawer-content class="editor-area">
+    <h2>Code Editor</h2>
+  </mat-drawer-content>
+</mat-drawer-container>
+
+<!-- Reusable Template for File Tree -->
+<ng-template #tmplNode
+  let-node="node">
+  <div class="node-item"
+    [attr.data-id]="node.id"
+    [attr.id]="'node-' + node.id">
+    <div class="node-title"
+      (click)="toggleExpandNode(node); selectNode(node)"
+      [ngClass]="{ 'selected': isSelected(node) }">
+      <mat-icon>{{ node.children.length ? 'folder' : 'description' }}</mat-icon>
+      &nbsp;&nbsp;&nbsp;
+      {{ node.id }}
     </div>
 
-    <mat-tree [dataSource]="dataSource"
-      [treeControl]="treeControl"
-      class="file-tree">
-      <mat-tree-node *matTreeNodeDef="let node"
-        matTreeNodePadding
-        [class.selected]="isSelected(node)"
-        (click)="selectNode(node)">
-        <button mat-icon-button
-          disabled></button>
-        <mat-icon class="node-icon">{{node.icon}}</mat-icon>
-        {{node.name}}
-      </mat-tree-node>
-
-      <mat-tree-node *matTreeNodeDef="let node; when: hasChild"
-        matTreeNodePadding
-        [class.selected]="isSelected(node)"
-        (click)="selectNode(node)">
-        <button mat-icon-button
-          matTreeNodeToggle
-          [attr.aria-label]="'Toggle ' + node.name"
-          class="flat-button"
-          (click)="selectNode(node)">
-          <mat-icon class="mat-icon-rtl-mirror">
-            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-          </mat-icon>
-        </button>
-        <mat-icon class="node-icon">{{node.icon}}</mat-icon>
-        {{node.name}}
-      </mat-tree-node>
-    </mat-tree>
+    <div *ngIf="node.isExpanded && node.children.length"
+      class="node-children"
+      cdkDropList
+      [cdkDropListData]="node.children"
+      [id]="node.id"
+      [cdkDropListConnectedTo]="dropTargetIds"
+      (cdkDropListDropped)="drop($event)"
+      [cdkDropListSortingDisabled]="true">
+      <div *ngFor="let child of node.children"
+        cdkDrag
+        [cdkDragData]="child.id"
+        (cdkDragMoved)="onDragMoved($event)">
+        <ng-container *ngTemplateOutlet="tmplNode; context: { node: child }"></ng-container>
+      </div>
+    </div>
   </div>
-
-  <div class="right-panel">
-    <h3>Edit</h3>
-    @if(selectedFoodNode) {
-    <form>
-      <mat-form-field appearance="fill">
-        <mat-label>Name</mat-label>
-        <input matInput
-          [(ngModel)]="selectedFoodNode!.name"
-          name="name"
-          (ngModelChange)="updateTree()" />
-      </mat-form-field>
-      <mat-form-field appearance="fill">
-        <mat-label>Icon</mat-label>
-        <mat-select [(ngModel)]="selectedFoodNode!.icon"
-          name="icon"
-          (selectionChange)="updateTree()">
-          @for(icon of iconOptions; track icon) {
-          <mat-option [value]="icon">
-            <mat-icon>{{icon}}</mat-icon> {{icon}}
-          </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </form>
-    } @else {
-    <p>Please select a node</p>
-    }
-  </div>
-</div>
+</ng-template>

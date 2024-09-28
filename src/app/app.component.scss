@@ -1,102 +1,88 @@
-.container {
-    display: flex;
+.main-container {
     height: 100vh;
-    background-color: #2d2d2d;
-    color: #e0e0e0;
 }
 
-.left-panel {
+.file-structure {
     width: 300px;
-    background-color: #1e1e1e;
-    padding: 10px;
-    border-right: 1px solid #333;
-
-    .button-panel {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 20px;
-
-        button {
-            width: 50%;
-            border-radius: 0;
-        }
-    }
-
-    .file-tree {
-        height: calc(100% - 60px);
-        overflow-y: auto;
-    }
-}
-
-.right-panel {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #1e1e1e;
-
-    h3 {
-        margin: 0;
-        margin-bottom: 20px;
-        color: #ffffff;
-    }
-
-    mat-form-field {
-        width: 100%;
-        color: #ffffff;
-
-        input {
-            color: #ffffff;
-        }
-
-        .mat-form-field-underline {
-            background-color: #ffffff;
-        }
-
-        .mat-form-field-label {
-            color: #ffffff;
-        }
-    }
-}
-
-mat-tree {
-    color: #e0e0e0;
-
-    mat-icon {
-        color: #ffffff;
-    }
-}
-
-.flat-button {
-    background: none;
-    border-radius: 0;
-}
-
-.node-icon {
-    margin-right: 8px;
-    color: #ffffff;
-}
-
-.selected {
-    background-color: #3f51b5;
+    background-color: #0d47a1; /* Dark blue */
     color: white;
 }
 
-button[mat-flat-button] {
-    border-radius: 0;
+.controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
 }
 
-button[mat-flat-button][color='accent'] {
-    background-color: #ff4081;
-
-    &:hover {
-        background-color: #f50057;
-    }
+.file-button,
+.folder-button {
+    width: 48%;
 }
 
-button[mat-flat-button][color='primary'] {
-    background-color: #3f51b5;
+.file-tree {
+    padding: 10px;
+}
 
-    &:hover {
-        background-color: #303f9f;
-    }
+/* Space between items */
+.node-item {
+    margin-bottom: 10px; /* Add space between files or folders */
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Remove hover effects completely */
+.node-title {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    background-color: transparent; /* No background color change */
+}
+
+/* Remove hover effect completely (no highlight on hover) */
+.node-title:hover {
+    background-color: transparent; /* No hover effect */
+}
+
+/* Highlight only the selected folder or file, and persist after click */
+.selected {
+    background-color: #1e88e5; /* Light blue background when selected */
+    color: white;
+}
+
+/* Increase padding for visual clarity of drop zones */
+.cdk-drop-list {
+    min-height: 100px;
+    padding: 10px; /* Padding inside the drop list */
+}
+
+/* Add padding inside node-children for better separation */
+.node-children {
+    margin-left: 20px;
+    padding-top: 10px; /* Add space before children items */
+    padding-bottom: 10px;
+    border-left: 2px solid #1976d2; /* Line between parent and children */
+}
+
+.editor-area {
+    padding: 20px;
+    background-color: #263238; /* Dark grey background for the editor area */
+    color: white; /* White text */
+}
+
+.editor-area h2 {
+    color: #03a9f4; /* Cyan for headings */
+}
+
+/* Add visual feedback for drop zones */
+.drop-before {
+    border-top: 4px solid #1e88e5; /* Thicker blue line to indicate drop before */
+}
+
+.drop-after {
+    border-bottom: 4px solid #1e88e5; /* Thicker blue line to indicate drop after */
+}
+
+.drop-inside {
+    background-color: rgba(30, 136, 229, 0.3); /* Light blue background for inside drop */
 }
