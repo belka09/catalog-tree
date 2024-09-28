@@ -66,7 +66,8 @@
     <div class="node-title"
       (click)="toggleExpandNode(node); selectNode(node)"
       [ngClass]="{ 'selected': isSelected(node) }">
-      <mat-icon>{{ node.children.length ? 'folder' : 'description' }}</mat-icon>
+      <!-- Display 'folder' or 'description' based on node type -->
+      <mat-icon>{{ node.isFolder ? 'folder' : 'description' }}</mat-icon>
       &nbsp;&nbsp;&nbsp;
       {{ node.id }}
     </div>

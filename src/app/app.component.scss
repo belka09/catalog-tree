@@ -16,51 +16,42 @@
 
 .file-button,
 .folder-button {
-    width: 48%;
+    width: 48%; /* 50% width minus a little space for margins */
+    border-radius: 0 !important; /* Force buttons to be rectangular */
+    margin: 0 2px; /* Ensure there is a small space between buttons */
 }
 
 .file-tree {
     padding: 10px;
 }
 
-/* Space between items */
-.node-item {
-    margin-bottom: 10px; /* Add space between files or folders */
-    padding: 10px;
-    border-radius: 4px;
-}
-
-/* Remove hover effects completely */
 .node-title {
-    padding: 10px;
+    padding: 15px 10px; /* Increase padding to make the area larger */
     cursor: pointer;
     display: flex;
     align-items: center;
-    background-color: transparent; /* No background color change */
+    transition: background-color 0.3s ease;
 }
 
-/* Remove hover effect completely (no highlight on hover) */
 .node-title:hover {
-    background-color: transparent; /* No hover effect */
+    background-color: #1e88e5; /* Hover effect for better visibility */
 }
 
-/* Highlight only the selected folder or file, and persist after click */
-.selected {
-    background-color: #1e88e5; /* Light blue background when selected */
-    color: white;
+/* Add visual feedback for drop zones */
+.drop-before {
+    border-top: 2px solid #1e88e5; /* Blue line to indicate drop before */
 }
 
-/* Increase padding for visual clarity of drop zones */
-.cdk-drop-list {
-    min-height: 100px;
-    padding: 10px; /* Padding inside the drop list */
+.drop-after {
+    border-bottom: 2px solid #1e88e5; /* Blue line to indicate drop after */
 }
 
-/* Add padding inside node-children for better separation */
+.drop-inside {
+    background-color: rgba(30, 136, 229, 0.3); /* Light blue background for inside drop */
+}
+
 .node-children {
     margin-left: 20px;
-    padding-top: 10px; /* Add space before children items */
-    padding-bottom: 10px;
     border-left: 2px solid #1976d2; /* Line between parent and children */
 }
 
@@ -74,15 +65,7 @@
     color: #03a9f4; /* Cyan for headings */
 }
 
-/* Add visual feedback for drop zones */
-.drop-before {
-    border-top: 4px solid #1e88e5; /* Thicker blue line to indicate drop before */
-}
-
-.drop-after {
-    border-bottom: 4px solid #1e88e5; /* Thicker blue line to indicate drop after */
-}
-
-.drop-inside {
-    background-color: rgba(30, 136, 229, 0.3); /* Light blue background for inside drop */
+/* Highlight only the selected folder's title */
+.selected {
+    background-color: #1e88e5; /* Lighter blue for selected folder */
 }

@@ -14,7 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms'; // Import FormsModule for two-way data binding
 
 @Component({
   selector: 'my-app',
@@ -132,6 +132,16 @@ export class AppComponent implements OnDestroy {
 
     const draggedItemId = event.item.data;
     const parentItemId = event.previousContainer.id;
+
+    // Get the target node (dropActionTodo.targetId)
+    const targetNode = this.nodeLookup[this.dropActionTodo.targetId];
+
+    // Block the drop if the target node is not a folder
+    if (!targetNode.isFolder) {
+      console.warn('Cannot drop items into a file.');
+      return;
+    }
+
     const targetListId = this.getParentNodeId(
       this.dropActionTodo!.targetId,
       this.nodes,
@@ -257,7 +267,7 @@ export class AppComponent implements OnDestroy {
 
     for (let i = 0; i < 2; i++) {
       const randomName = `file-${Math.random().toString(36).substring(2, 8)}`;
-      const newFile = { id: randomName, children: [] };
+      const newFile = { id: randomName, children: [], isFolder: false };
 
       if (Array.isArray(targetNode)) {
         // Add to the root if targetNode is the root (this.nodes)
@@ -278,7 +288,7 @@ export class AppComponent implements OnDestroy {
     }
   }
 
-  // Add 2 folders, each with an empty file inside, in the selected node or root if no node selected
+  // Add 2 folders without any files inside, in the selected node or root if no node selected
   addFolders() {
     const targetNode = this.selectedNode ?? this.nodes; // If no node is selected, use root (this.nodes)
 
@@ -286,12 +296,8 @@ export class AppComponent implements OnDestroy {
       const randomName = `folder-${Math.random().toString(36).substring(2, 8)}`;
       const newFolder = {
         id: randomName,
-        children: [
-          {
-            id: `file-${Math.random().toString(36).substring(2, 8)}`,
-            children: [],
-          },
-        ],
+        children: [],
+        isFolder: true, // Explicitly mark as folder
       };
 
       if (Array.isArray(targetNode)) {
@@ -302,10 +308,9 @@ export class AppComponent implements OnDestroy {
         targetNode.children.push(newFolder);
       }
 
-      // Update the dropTargetIds and nodeLookup to include the new folder and its file
+      // Update the dropTargetIds and nodeLookup to include the new folder
       this.dropTargetIds.push(newFolder.id);
       this.nodeLookup[newFolder.id] = newFolder;
-      this.nodeLookup[newFolder.children[0].id] = newFolder.children[0];
     }
 
     // Ensure the selected node is expanded if it's a folder
