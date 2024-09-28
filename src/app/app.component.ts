@@ -214,11 +214,15 @@ export class AppComponent implements OnDestroy {
       .forEach((element) => element.classList.remove('drop-inside'));
   }
 
-  // Set the clicked node as the selected node and update the input field
   selectNode(node: TreeNode) {
     this.selectedNode = node;
     this.selectedNodeName = node.id; // Prepopulate the input field with the current name
-    this.selectedNodeIcon = node.icon || 'description'; // Prepopulate the icon field with the current icon or a default
+    this.selectedNodeIcon = node.icon || 'description'; // Prepopulate the icon field with the current icon
+  }
+
+  // Method to check if a folder is selected or if no node is selected (root level)
+  isAddEnabled(): boolean {
+    return !this.selectedNode || this.selectedNode.isFolder === true;
   }
 
   // Toggle the node expansion/collapse on click
