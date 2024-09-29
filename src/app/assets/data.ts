@@ -13,28 +13,16 @@ export interface DropInfo {
 
 export var demoData: TreeNode[] = [
   {
-    id: 'item 1',
+    id: 'File 1',
     children: [],
     isFolder: false,
     icon: 'description',
   },
   {
-    id: 'item 2',
+    id: 'Folder 1',
     children: [
       {
-        id: 'item 2.1',
-        children: [],
-        isFolder: false,
-        icon: 'description',
-      },
-      {
-        id: 'item 2.2',
-        children: [],
-        isFolder: false,
-        icon: 'description',
-      },
-      {
-        id: 'item 2.3',
+        id: 'File 1.1',
         children: [],
         isFolder: false,
         icon: 'description',
@@ -44,7 +32,20 @@ export var demoData: TreeNode[] = [
     icon: 'folder',
   },
   {
-    id: 'item 3',
+    id: 'Folder 2',
+    children: [
+      {
+        id: 'File 2.1',
+        children: [],
+        isFolder: false,
+        icon: 'description',
+      },
+    ],
+    isFolder: true,
+    icon: 'folder',
+  },
+  {
+    id: 'File 3',
     children: [],
     isFolder: false,
     icon: 'description',
