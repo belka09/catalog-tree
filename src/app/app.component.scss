@@ -37,27 +37,26 @@
 }
 
 .node-title {
-    padding: 15px 10px;
+    padding: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     transition: background-color 0.3s ease;
+    width: auto;
 }
 
 .node-title.dragging {
     background-color: transparent !important;
 }
 
-.node-title:hover {
-    background-color: $secondary-color;
-}
-
 .drop-before {
-    border-top: 2px solid $secondary-color;
+    border-top: 35px solid $hover-color;
+    margin-top: 5px;
 }
 
 .drop-after {
-    border-bottom: 2px solid $secondary-color;
+    border-bottom: 35px solid $hover-color;
+    margin-bottom: 5px;
 }
 
 .drop-inside {
@@ -99,4 +98,12 @@ button {
 
 .selected {
     background-color: $secondary-color;
+}
+
+.cdk-drop-list-dragging .node-item {
+    border-bottom: 15px dashed transparent;
+}
+
+.cdk-drag-preview {
+    width: 200px;
 }
