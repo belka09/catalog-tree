@@ -308,7 +308,7 @@ export class AppComponent implements OnDestroy {
   addFiles() {
     const targetNode = this.selectedNode ?? this.nodes;
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 50; i++) {
       const randomName = `file-${Math.random().toString(36).substring(2, 8)}`;
       const newFile = {
         id: randomName,
@@ -335,7 +335,7 @@ export class AppComponent implements OnDestroy {
   addFolders() {
     const targetNode = this.selectedNode ?? this.nodes;
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 50; i++) {
       const randomName = `folder-${Math.random().toString(36).substring(2, 8)}`;
       const newFolder = {
         id: randomName,
