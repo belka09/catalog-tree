@@ -40,7 +40,8 @@
     <h2>Code Editor</h2>
     <div *ngIf="selectedNode">
       <form (ngSubmit)="changeNodeName()"
-        class="edit-form">
+        class="edit-form"
+        #editForm="ngForm">
         <mat-form-field appearance="fill">
           <mat-label>Change Name</mat-label>
           <input matInput
@@ -54,19 +55,23 @@
           <mat-select [(ngModel)]="selectedNodeIcon"
             name="nodeIcon">
             <mat-option *ngFor="let icon of availableIcons"
-              [value]="icon">{{ icon }}</mat-option>
+              [value]="icon">
+              {{ icon }}
+            </mat-option>
           </mat-select>
         </mat-form-field>
 
         <button mat-raised-button
           color="primary"
-          type="submit">Save</button>
+          type="submit"
+          [disabled]="editForm.invalid">Save</button>
       </form>
     </div>
     <div *ngIf="!selectedNode">
       <p>Select a file or folder to change its name</p>
     </div>
   </mat-drawer-content>
+
 </mat-drawer-container>
 
 <ng-template #tmplNode
