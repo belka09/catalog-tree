@@ -98,7 +98,8 @@
       <div *ngFor="let child of node.children"
         cdkDrag
         [cdkDragData]="child.id"
-        (cdkDragMoved)="onDragMoved($event)">
+        (cdkDragMoved)="onDragMoved($event)"
+        (mousedown)="onDragStart($event)">
         <ng-container *ngTemplateOutlet="tmplNode; context: { node: child }"></ng-container>
       </div>
     </div>

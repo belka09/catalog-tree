@@ -51,7 +51,7 @@ export class AppComponent implements OnDestroy {
     'storage',
     'list',
   ];
-  isShiftPressed: boolean = false;
+  isShiftPressedDuringDrag: boolean = false;
 
   private dragMoved$ = new Subject<CdkDragMove>();
   private destroy$ = new Subject<void>();
@@ -62,29 +62,11 @@ export class AppComponent implements OnDestroy {
     this.dragMoved$
       .pipe(debounceTime(50), takeUntil(this.destroy$))
       .subscribe((event) => this.handleDragMoved(event));
-
-    document.addEventListener('keydown', this.onKeyDown.bind(this));
-    document.addEventListener('keyup', this.onKeyUp.bind(this));
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-
-    document.removeEventListener('keydown', this.onKeyDown.bind(this));
-    document.removeEventListener('keyup', this.onKeyUp.bind(this));
-  }
-
-  onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Shift') {
-      this.isShiftPressed = true;
-    }
-  }
-
-  onKeyUp(event: KeyboardEvent) {
-    if (event.key === 'Shift') {
-      this.isShiftPressed = false;
-    }
   }
 
   prepareDragDrop(nodes: TreeNode[]) {
@@ -95,6 +77,10 @@ export class AppComponent implements OnDestroy {
         this.prepareDragDrop(node.children);
       }
     });
+  }
+
+  onDragStart(event: MouseEvent) {
+    this.isShiftPressedDuringDrag = event.shiftKey;
   }
 
   onDragMoved(event: CdkDragMove) {
@@ -178,7 +164,7 @@ export class AppComponent implements OnDestroy {
         ? this.nodeLookup[targetListId].children
         : this.nodes;
 
-    const newItem = this.isShiftPressed
+    const newItem = this.isShiftPressedDuringDrag
       ? {
           ...draggedItem,
           id: `${draggedItem.id}_copy`,
@@ -186,7 +172,7 @@ export class AppComponent implements OnDestroy {
         }
       : draggedItem;
 
-    if (!this.isShiftPressed) {
+    if (!this.isShiftPressedDuringDrag) {
       const index = oldItemContainer.findIndex((c) => c.id === draggedItemId);
       if (index > -1) {
         oldItemContainer.splice(index, 1);
@@ -212,9 +198,11 @@ export class AppComponent implements OnDestroy {
         break;
     }
 
-    if (this.isShiftPressed) {
+    if (this.isShiftPressedDuringDrag) {
       this.nodeLookup[newItem.id] = newItem;
     }
+
+    this.isShiftPressedDuringDrag = false;
 
     this.clearDragInfo(true);
   }
