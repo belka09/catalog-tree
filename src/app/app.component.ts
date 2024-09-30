@@ -5,6 +5,7 @@ import {
   CdkDropList,
   CdkDrag,
   CdkDragMove,
+  CdkDragEnd,
 } from '@angular/cdk/drag-drop';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -85,6 +86,10 @@ export class AppComponent implements OnDestroy {
 
   onDragMoved(event: CdkDragMove) {
     this.dragMoved$.next(event);
+  }
+
+  onDragEnd(event: CdkDragEnd) {
+    this.clearDragInfo();
   }
 
   handleDragMoved(event: CdkDragMove) {
@@ -246,10 +251,6 @@ export class AppComponent implements OnDestroy {
     this.document
       .querySelectorAll('.drop-inside')
       .forEach((element) => element.classList.remove('drop-inside'));
-
-    this.document
-      .querySelectorAll('.dragging')
-      .forEach((element) => element.classList.remove('dragging'));
   }
 
   selectNode(node: TreeNode, event: MouseEvent) {

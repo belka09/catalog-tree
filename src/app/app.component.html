@@ -99,7 +99,8 @@
         cdkDrag
         [cdkDragData]="child.id"
         (cdkDragMoved)="onDragMoved($event)"
-        (mousedown)="onDragStart($event)">
+        (mousedown)="onDragStart($event)"
+        (cdkDragEnded)="onDragEnd($event)">
         <ng-container *ngTemplateOutlet="tmplNode; context: { node: child }"></ng-container>
       </div>
     </div>
